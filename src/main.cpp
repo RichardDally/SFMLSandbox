@@ -15,6 +15,11 @@ int main()
     sprite.setTextureRect(sf::IntRect(0, 0, 150, 150));
     constexpr float defaultDistance = 5.f;
 
+    // Set character at center of window
+    const float x{ (window.getSize().x - sprite.getTextureRect().width) / 2.f };
+    const float y{ (window.getSize().y - sprite.getTextureRect().height) / 2.f };
+    sprite.move(x, y);
+
     while (window.isOpen())
     {
         sf::Event event;
