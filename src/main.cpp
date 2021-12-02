@@ -19,10 +19,10 @@ int main()
     // Tweak dimensions
     constexpr auto zoneWidth{ 1920.f };
     constexpr auto zoneHeight{ 1080.f };
-    constexpr auto rows{ 1 };
+    constexpr auto rows{ 2 };
     constexpr auto columns{ 2 };
     constexpr auto totalWidth{ zoneWidth * columns };
-    constexpr auto totalHeight{ zoneWidth * rows };
+    constexpr auto totalHeight{ zoneHeight * rows };
 
     std::array<sf::Color, 6> colors {
         sf::Color::Red,
@@ -50,7 +50,7 @@ int main()
     sf::Sprite character;
     character.setTexture(texture);
     character.setTextureRect(sf::IntRect(0, 0, 150, 150));
-    constexpr float defaultDistance = 10.f;
+    constexpr float defaultDistance = 30.f;
 
     // Set character at center of window
     const float x{ (window.getSize().x - character.getTextureRect().width) / 2.f };
@@ -86,12 +86,26 @@ int main()
                 }
                 else if (event.key.code == sf::Keyboard::Up)
                 {
-                    camera.move(0.f, -defaultDistance);
+                    // Camera should NOT move if top boundary is visible.
+                    // Camera should NOT move if character is not at center of the zone
+                    const auto topBoundaryIsNotVisible{ camera.getCenter().y - (size.y / 2) - defaultDistance >= 0 };
+                    const auto characterIsBottomToCenter{ character.getPosition().y <= totalHeight - zoneHeight / 2 };
+                    if (topBoundaryIsNotVisible && characterIsBottomToCenter)
+                    {
+                        camera.move(0.f, -defaultDistance);
+                    }
                     character.move(0.f, -defaultDistance);
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
-                    camera.move(0.f, defaultDistance);
+                    // Camera should NOT move if bottom boundary is visible.
+                    // Camera should NOT move if character is not at center of the zone
+                    const auto bottomBoundaryIsNotVisible{ camera.getCenter().y + (size.y / 2) + defaultDistance <= totalHeight };
+                    const auto characterIsTopToCenter{ character.getPosition().y >= zoneHeight / 2 };
+                    if (bottomBoundaryIsNotVisible && characterIsTopToCenter)
+                    {
+                        camera.move(0.f, defaultDistance);
+                    }
                     character.move(0.f, defaultDistance);
                 }
                 else if (event.key.code == sf::Keyboard::Right)
