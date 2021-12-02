@@ -74,7 +74,14 @@ int main()
                 }
                 else if (event.key.code == sf::Keyboard::Left)
                 {
-                    camera.move(-defaultDistance, 0.f);
+                    // Camera should NOT move if left boundary is visible.
+                    // Camera should NOT move if character is not at center of the zone
+                    const auto leftBoundaryIsNotVisible{ camera.getCenter().x - (size.x / 2) - defaultDistance >= 0 };
+                    const auto characterIsRightToCenter{ character.getPosition().x <= totalWidth - zoneWidth / 2 };
+                    if (leftBoundaryIsNotVisible && characterIsRightToCenter)
+                    {
+                        camera.move(-defaultDistance, 0.f);
+                    }
                     character.move(-defaultDistance, 0.f);
                 }
                 else if (event.key.code == sf::Keyboard::Up)
@@ -89,7 +96,14 @@ int main()
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
-                    camera.move(defaultDistance, 0.f);
+                    // Camera should NOT move if right boundary is visible.
+                    // Camera should NOT move if character is not at center of the zone
+                    const auto rightBoundaryIsNotVisible{ camera.getCenter().x + (size.x / 2) + defaultDistance <= totalWidth };
+                    const auto characterIsLeftToCenter{ character.getPosition().x >= zoneWidth / 2 };
+                    if (rightBoundaryIsNotVisible && characterIsLeftToCenter)
+                    {
+                        camera.move(defaultDistance, 0.f);
+                    }
                     character.move(defaultDistance, 0.f);
                 }
             }
