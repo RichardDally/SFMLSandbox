@@ -6,12 +6,8 @@ int main()
 {
     sf::VideoMode _1080p(1920, 1080);
     sf::VideoMode svga(800, 600);
-    sf::RenderWindow window(_1080p, "SFML window");
+    sf::RenderWindow window(_1080p, "SFML Sandbox");
     window.setFramerateLimit(30);
-
-    // Setup camera that will follow the character
-    sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
-    sf::View camera(sf::FloatRect(0, 0, size.x, size.y));
 
     sf::Texture texture;
     if (!texture.loadFromFile("REAPER1_IDLE_BLINKING_RIGHT.png"))
@@ -19,38 +15,37 @@ int main()
 
     // Creating some "zones" to explore
     std::vector<sf::RectangleShape> zones;
+
+    // Tweak dimensions
+    constexpr auto zoneWidth{ 1920.f };
+    constexpr auto zoneHeight{ 1080.f };
+    constexpr auto rows{ 1 };
+    constexpr auto columns{ 2 };
+    constexpr auto totalWidth{ zoneWidth * columns };
+    constexpr auto totalHeight{ zoneWidth * rows };
+
+    std::array<sf::Color, 6> colors {
+        sf::Color::Red,
+        sf::Color::Green,
+        sf::Color::Blue,
+        sf::Color::Yellow,
+        sf::Color::Magenta,
+        sf::Color::Cyan,
+    };
+
     sf::RectangleShape zone;
-
-    auto zoneWidth{ 1080.f };
-    auto zoneHeight{ 1080.f };
-
     zone.setSize({ zoneWidth, zoneHeight });
-    zone.setPosition(1, 1);
-    zone.setOutlineColor(sf::Color::White);
-    zone.setFillColor(sf::Color::Blue);
-    zone.setOutlineThickness(1.0f);
-    zones.push_back(zone);
-
-    zone.setSize({ zoneWidth, zoneHeight });
-    zone.setPosition(1 + zoneWidth, 1);
-    zone.setOutlineColor(sf::Color::White);
-    zone.setFillColor(sf::Color::Magenta);
-    zone.setOutlineThickness(1.0f);
-    zones.push_back(zone);
-
-    zone.setSize({ zoneWidth, zoneHeight });
-    zone.setPosition(1 + zoneWidth * 2, 1);
-    zone.setOutlineColor(sf::Color::White);
-    zone.setFillColor(sf::Color::Green);
-    zone.setOutlineThickness(1.0f);
-    zones.push_back(zone);
-
-    zone.setSize({ zoneWidth, zoneHeight });
-    zone.setPosition(1 + zoneWidth * 3, 1);
-    zone.setOutlineColor(sf::Color::White);
-    zone.setFillColor(sf::Color::Yellow);
-    zone.setOutlineThickness(1.0f);
-    zones.push_back(zone);
+    for (int c = 0; c < columns; ++c)
+    {
+        for (int r = 0; r < rows; r++)
+        {
+            zone.setPosition(1 + zoneWidth * c, 1 + zoneHeight * r);
+            zone.setOutlineColor(sf::Color::White);
+            zone.setFillColor(colors.at(zones.size()));
+            zone.setOutlineThickness(1.0f);
+            zones.push_back(zone);
+        }
+    }
 
     sf::Sprite character;
     character.setTexture(texture);
@@ -61,6 +56,10 @@ int main()
     const float x{ (window.getSize().x - character.getTextureRect().width) / 2.f };
     const float y{ (window.getSize().y - character.getTextureRect().height) / 2.f };
     character.move(x, y);
+
+    // Setup camera that will follow the character
+    sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
+    sf::View camera(sf::FloatRect(0, 0, size.x, size.y));
 
     while (window.isOpen())
     {
