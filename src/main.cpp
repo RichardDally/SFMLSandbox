@@ -6,6 +6,7 @@ int main()
     sf::VideoMode _1080p(1920, 1080);
     sf::VideoMode svga(800, 600);
     sf::RenderWindow window(_1080p, "SFML window");
+    window.setFramerateLimit(30);
 
     // Setup camera that will follow the character
     sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
