@@ -82,7 +82,12 @@ int main()
                     {
                         camera.move(-defaultDistance, 0.f);
                     }
-                    character.move(-defaultDistance, 0.f);
+
+                    const auto crossingBoundary{ character.getPosition().x - defaultDistance < 0 };
+                    if (!crossingBoundary)
+                    {
+                        character.move(-defaultDistance, 0.f);
+                    }
                 }
                 else if (event.key.code == sf::Keyboard::Up)
                 {
@@ -94,7 +99,12 @@ int main()
                     {
                         camera.move(0.f, -defaultDistance);
                     }
-                    character.move(0.f, -defaultDistance);
+
+                    const auto crossingBoundary{ character.getPosition().y - defaultDistance < 0 };
+                    if (!crossingBoundary)
+                    {
+                        character.move(0.f, -defaultDistance);
+                    }
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
@@ -106,7 +116,12 @@ int main()
                     {
                         camera.move(0.f, defaultDistance);
                     }
-                    character.move(0.f, defaultDistance);
+
+                    const auto crossingBoundary{ character.getPosition().y + defaultDistance + character.getTextureRect().width > totalHeight };
+                    if (!crossingBoundary)
+                    {
+                        character.move(0.f, defaultDistance);
+                    }
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
@@ -118,7 +133,12 @@ int main()
                     {
                         camera.move(defaultDistance, 0.f);
                     }
-                    character.move(defaultDistance, 0.f);
+
+                    const auto crossingBoundary{ character.getPosition().x + defaultDistance + character.getTextureRect().height > totalWidth };
+                    if (!crossingBoundary)
+                    {
+                        character.move(defaultDistance, 0.f);
+                    }
                 }
             }
             else if (event.type == sf::Event::Closed)
