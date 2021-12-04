@@ -1,4 +1,5 @@
 #include <array>
+#include <spdlog/spdlog.h>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 #include "Event.h"
@@ -49,13 +50,24 @@ Game::Game(sf::RenderWindow& window, std::vector<Event>& eventQueue)
 
 void Game::handleEvent(sf::Event event)
 {
+    if (!running_)
+    {
+        return;
+    }
+
     if (event.type == sf::Event::KeyPressed)
     {
         if (event.key.code == sf::Keyboard::Escape)
         {
-            window_.close();
+            eventQueue_.push_back(Event::TOGGLE_PAUSE);
         }
-        else if (event.key.code == sf::Keyboard::Left)
+
+        if (paused_)
+        {
+            return;
+        }
+
+        if (event.key.code == sf::Keyboard::Left)
         {
             // Camera should NOT move if left boundary is visible.
             // Camera should NOT move if character is not at center of the zone
@@ -144,4 +156,24 @@ void Game::draw()
 void Game::setVisible(bool state)
 {
     visible_ = state;
+}
+
+void Game::togglePause()
+{
+    paused_ = !paused_;
+    spdlog::info("Game is now [{}]", paused_ ? "paused" : "resumed");
+}
+
+void Game::starts()
+{
+    setVisible(true);
+    paused_ = false;
+    running_ = true;
+}
+
+void Game::stops()
+{
+    setVisible(false);
+    paused_ = false;
+    running_ = false;
 }

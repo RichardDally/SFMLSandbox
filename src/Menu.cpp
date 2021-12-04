@@ -1,3 +1,4 @@
+#include "BoutonDetails.h"
 #include "Menu.h"
 
 
@@ -13,6 +14,7 @@ Menu::Menu(tgui::Gui& gui, std::vector<Event>& eventQueue)
     };
 
     title_ = CreatePage(titleDispatch);
+    gui_.add(title_);
 
     const auto trainingDispatch = std::array{
         ButtonDetails{"Game", std::function([this]() {StartGame(); })},
@@ -20,6 +22,7 @@ Menu::Menu(tgui::Gui& gui, std::vector<Event>& eventQueue)
     };
 
     training_ = CreatePage(trainingDispatch);
+    gui_.add(training_);
 
     // Setup
     current_ = title_;

@@ -3,6 +3,7 @@
 #include "Menu.h"
 #include "Game.h"
 #include "Event.h"
+#include "Pause.h"
 
 
 int main()
@@ -17,6 +18,7 @@ int main()
     Game game(window, eventQueue);
     tgui::Gui tgui(window);
     Menu menu(tgui, eventQueue);
+    Pause pause(tgui, eventQueue);
 
     while (window.isOpen())
     {
@@ -32,7 +34,8 @@ int main()
             game.handleEvent(event);
         }
 
-        for (auto event : eventQueue)
+        // Process internal events
+        for (const auto event : eventQueue)
         {
             switch (event)
             {
@@ -43,8 +46,22 @@ int main()
                 }
                 case Event::START_GAME:
                 {
-                    game.setVisible(true);
+                    game.starts();
                     menu.setVisible(false);
+                    break;
+                }
+                case Event::BACK_TO_MAIN_MENU:
+                {
+                    game.stops();
+                    menu.setVisible(true);
+                    menu.ShowTitlePage();
+                    pause.toggleVisibility();
+                    break;
+                }
+                case Event::TOGGLE_PAUSE:
+                {
+                    pause.toggleVisibility();
+                    game.togglePause();
                     break;
                 }
             }

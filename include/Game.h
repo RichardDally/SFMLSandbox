@@ -12,6 +12,8 @@ struct Game
     sf::Sprite character_;
     std::vector<sf::RectangleShape> zones_;
     bool visible_{ false };
+    bool paused_{ false };
+    bool running_{ false };
 
     // Tweak dimensions
     constexpr static auto zoneWidth_{ 1920.f };
@@ -26,4 +28,7 @@ struct Game
     void handleEvent(sf::Event event);
     void draw();
     void setVisible(bool state);
+    void togglePause();
+    void starts();
+    void stops();
 };

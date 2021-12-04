@@ -1,18 +1,10 @@
 #pragma once
 
-#include <functional>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Group.hpp>
 #include <spdlog/spdlog.h>
 #include "Event.h"
-
-
-struct ButtonDetails
-{
-    std::string name;
-    std::function<void(void)> callback;
-};
 
 
 struct Menu
@@ -27,7 +19,7 @@ struct Menu
     void setVisible(bool state);
 
     template<typename T>
-    tgui::Group::Ptr CreatePage(T callbackDispatch)
+    static tgui::Group::Ptr CreatePage(T callbackDispatch)
     {
         constexpr int pixelsBetweenButtons{ 10 };
         constexpr int buttonWidth{ 100 };
@@ -40,7 +32,6 @@ struct Menu
         group->setSize(groupWidth, groupHeight);
         group->setVisible(false);
         group->setPosition({ "50%", "50%" });
-        gui_.add(group);
 
         tgui::Button::Ptr previousButton{ nullptr };
         for (auto& [name, callback] : callbackDispatch)
