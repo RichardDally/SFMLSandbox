@@ -7,7 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
+find_package(TGUI 0.10 REQUIRED)
 
+include_directories("include")
 include_directories("third_party")
 
 file(
@@ -27,4 +29,5 @@ target_link_libraries(
     sfml-graphics
     sfml-window
     sfml-system
+    TGUI::TGUI
 )
