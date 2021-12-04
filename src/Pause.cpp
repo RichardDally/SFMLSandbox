@@ -14,7 +14,7 @@ Pause::Pause(tgui::Gui& gui, std::vector<Event>& eventQueue)
         ButtonDetails{"Quit to desktop", std::function([this]() {QuitCB(); })},
     };
 
-    current_ = Menu::CreatePage(pauseDispatch);
+    current_ = Menu::CreateGroup(pauseDispatch);
     gui_.add(current_);
 }
 

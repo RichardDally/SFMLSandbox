@@ -2,6 +2,8 @@
 
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/Widgets/Button.hpp>
+#include <TGUI/Widgets/Label.hpp>
+#include <TGUI/Widgets/ComboBox.hpp>
 #include <TGUI/Widgets/Group.hpp>
 #include <spdlog/spdlog.h>
 #include "Event.h"
@@ -13,16 +15,18 @@ struct Menu
     std::vector<Event>& eventQueue_;
     tgui::Group::Ptr current_{ nullptr };
     tgui::Group::Ptr title_{ nullptr };
+    tgui::Group::Ptr options_{ nullptr };
     tgui::Group::Ptr training_{ nullptr };
+    tgui::ComboBox::Ptr resolutionBox_{ nullptr };
+    static constexpr int pixelsBetweenButtons{ 10 };
 
     Menu(tgui::Gui& gui, std::vector<Event>& eventQueue);
     void setVisible(bool state);
 
     template<typename T>
-    static tgui::Group::Ptr CreatePage(T callbackDispatch)
+    static tgui::Group::Ptr CreateGroup(T callbackDispatch)
     {
-        constexpr int pixelsBetweenButtons{ 10 };
-        constexpr int buttonWidth{ 100 };
+        constexpr int buttonWidth{ 170 };
         constexpr int buttonHeight{ 40 };
 
         constexpr int groupWidth{ 150 };
@@ -50,6 +54,10 @@ struct Menu
         return group;
     }
 
+    void CreateTitleGroup();
+    void CreateTrainingGroup();
+    void CreateOptionsGroup();
+
     // Callbacks
     void ShowTitlePage();
     void ShowTrainingPage();
@@ -57,4 +65,5 @@ struct Menu
     void ShowOptionsPage();
     void StartGame();
     void Exit();
+    void ChangeResolution();
 };
