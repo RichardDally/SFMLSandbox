@@ -57,9 +57,9 @@ int main()
     const float y{ (window.getSize().y - character.getTextureRect().height) / 2.f };
     character.move(x, y);
 
-    // Setup camera that will follow the character
-    sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
-    sf::View camera(sf::FloatRect(0, 0, size.x, size.y));
+    // Setup cameras that will follow the character
+    // Cover whole screen resolution
+    sf::View camera(sf::FloatRect(0, 0, static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
 
     while (window.isOpen())
     {
@@ -76,7 +76,7 @@ int main()
                 {
                     // Camera should NOT move if left boundary is visible.
                     // Camera should NOT move if character is not at center of the zone
-                    const auto leftBoundaryIsNotVisible{ camera.getCenter().x - (size.x / 2) - defaultDistance >= 0 };
+                    const auto leftBoundaryIsNotVisible{ camera.getCenter().x - (window.getSize().x / 2) - defaultDistance >= 0 };
                     const auto characterIsRightToCenter{ character.getPosition().x <= totalWidth - zoneWidth / 2 };
                     if (leftBoundaryIsNotVisible && characterIsRightToCenter)
                     {
@@ -93,7 +93,7 @@ int main()
                 {
                     // Camera should NOT move if top boundary is visible.
                     // Camera should NOT move if character is not at center of the zone
-                    const auto topBoundaryIsNotVisible{ camera.getCenter().y - (size.y / 2) - defaultDistance >= 0 };
+                    const auto topBoundaryIsNotVisible{ camera.getCenter().y - (window.getSize().y / 2) - defaultDistance >= 0 };
                     const auto characterIsBottomToCenter{ character.getPosition().y <= totalHeight - zoneHeight / 2 };
                     if (topBoundaryIsNotVisible && characterIsBottomToCenter)
                     {
@@ -110,7 +110,7 @@ int main()
                 {
                     // Camera should NOT move if bottom boundary is visible.
                     // Camera should NOT move if character is not at center of the zone
-                    const auto bottomBoundaryIsNotVisible{ camera.getCenter().y + (size.y / 2) + defaultDistance <= totalHeight };
+                    const auto bottomBoundaryIsNotVisible{ camera.getCenter().y + (window.getSize().y / 2) + defaultDistance <= totalHeight };
                     const auto characterIsTopToCenter{ character.getPosition().y >= zoneHeight / 2 };
                     if (bottomBoundaryIsNotVisible && characterIsTopToCenter)
                     {
@@ -127,7 +127,7 @@ int main()
                 {
                     // Camera should NOT move if right boundary is visible.
                     // Camera should NOT move if character is not at center of the zone
-                    const auto rightBoundaryIsNotVisible{ camera.getCenter().x + (size.x / 2) + defaultDistance <= totalWidth };
+                    const auto rightBoundaryIsNotVisible{ camera.getCenter().x + (window.getSize().x / 2) + defaultDistance <= totalWidth };
                     const auto characterIsLeftToCenter{ character.getPosition().x >= zoneWidth / 2 };
                     if (rightBoundaryIsNotVisible && characterIsLeftToCenter)
                     {
