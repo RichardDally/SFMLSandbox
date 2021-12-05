@@ -45,23 +45,53 @@ void Menu::CreateTrainingGroup()
 
 void Menu::CreateOptionsGroup()
 {
-    auto label = tgui::Label::create("Options");
-    label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+    auto optionsLabel = tgui::Label::create("Options");
+    optionsLabel->setWidth(300);
+    optionsLabel->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
 
     resolutionBox_ = tgui::ComboBox::create();
-    resolutionBox_->onItemSelect(std::function([this]() {ChangeResolution(); }));
+    resolutionBox_->onItemSelect(std::function([this]() { ChangeResolution(); }));
     resolutionBox_->addItem("800x600");
     resolutionBox_->addItem("1280x800");
     resolutionBox_->addItem("1920x1080");
     resolutionBox_->addItem("2560x1440");
     resolutionBox_->setSelectedItem("1920x1080");
 
+    // Volume
+    auto volumeLayout = tgui::HorizontalLayout::create();
+
+    // Volume slider
+    volumeSlider_ = tgui::Slider::create();
+    volumeSlider_->setWidth(400);
+    volumeSlider_->setMinimum(0.f);
+    volumeSlider_->setMaximum(100.f);
+    volumeSlider_->setStep(1.f);
+    volumeSlider_->setValue(50.f);
+    volumeSlider_->onValueChange(std::function([this]() { ChangeVolume(); }));
+
+    // Volume optionsLabel
+    auto volumeLabel = tgui::Label::create();
+    volumeLabel->setWidth(100);
+    volumeLabel->setText(fmt::format("{}", volumeSlider_->getValue()));
+
+    // Mute checkbox
+    muteCheckbox_ = tgui::CheckBox::create();
+    muteCheckbox_->setWidth(10);
+    muteCheckbox_->onChange(std::function([this]() { MuteVolume(); }));
+    muteCheckbox_->setText("Mute");
+
+    // Add widgets to layout
+    volumeLayout->add(volumeSlider_);
+    volumeLayout->add(volumeLabel);
+    volumeLayout->add(muteCheckbox_);
+
     auto backButton = tgui::Button::create("Back");
-    backButton->onClick(std::function([this]() {BackToPreviousGroup(); }));
+    backButton->onClick(std::function([this]() { BackToPreviousGroup(); }));
 
     std::vector<tgui::Widget::Ptr> widgets;
-    widgets.push_back(label);
+    widgets.push_back(optionsLabel);
     widgets.push_back(resolutionBox_);
+    widgets.push_back(volumeLayout);
     widgets.push_back(backButton);
 
     options_ = AlignVerticallyWidgets(widgets);
@@ -200,6 +230,16 @@ void Menu::ChangeResolution()
     {
         spdlog::critical("Unknown resolution [{}]", selectedResolution);
     }
+}
+
+void Menu::ChangeVolume()
+{
+
+}
+
+void Menu::MuteVolume()
+{
+
 }
 
 void Menu::ResumeGame()

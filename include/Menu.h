@@ -4,7 +4,10 @@
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/ComboBox.hpp>
+#include <TGUI/Widgets/Slider.hpp>
+#include <TGUI/Widgets/CheckBox.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
+#include <TGUI/Widgets/HorizontalLayout.hpp>
 #include <TGUI/Widgets/Group.hpp>
 #include <spdlog/spdlog.h>
 #include "Event.h"
@@ -26,6 +29,8 @@ struct Menu
 
     // Convenience pointer to quickly access resolution
     tgui::ComboBox::Ptr resolutionBox_{ nullptr };
+    tgui::Slider::Ptr volumeSlider_{ nullptr };
+    tgui::CheckBox::Ptr muteCheckbox_{ nullptr };
     static constexpr int pixelsBetweenButtons{ 10 };
 
     Menu(tgui::Gui& gui, std::vector<Event>& eventQueue);
@@ -90,6 +95,8 @@ struct Menu
 
     // Options callbacks
     void ChangeResolution();
+    void ChangeVolume();
+    void MuteVolume();
 
     // Pause callbacks
     void ResumeGame();
