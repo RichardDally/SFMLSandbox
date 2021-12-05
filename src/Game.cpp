@@ -41,11 +41,6 @@ Game::Game(sf::RenderWindow& window, std::vector<Event>& eventQueue)
 
     character_.setTexture(texture_);
     character_.setTextureRect(sf::IntRect(0, 0, 150, 150));
-
-    // Set character at center of window
-    const float x{ (window.getSize().x - character_.getTextureRect().width) / 2.f };
-    const float y{ (window.getSize().y - character_.getTextureRect().height) / 2.f };
-    character_.move(x, y);
 }
 
 void Game::handleEvent(sf::Event event)
@@ -169,6 +164,14 @@ void Game::starts()
     setVisible(true);
     paused_ = false;
     running_ = true;
+
+    // Set character at center of window
+    const float x{ (window_.getSize().x - character_.getTextureRect().width) / 2.f };
+    const float y{ (window_.getSize().y - character_.getTextureRect().height) / 2.f };
+    character_.setPosition(x, y);
+
+    // Reset camera to center
+    camera_.reset(sf::FloatRect(0, 0, static_cast<float>(window_.getSize().x), static_cast<float>(window_.getSize().y)));
 }
 
 void Game::stops()
