@@ -13,15 +13,23 @@ struct Menu
 {
     tgui::Gui& gui_;
     std::vector<Event>& eventQueue_;
+
     tgui::Group::Ptr current_{ nullptr };
+    tgui::Group::Ptr previous_{ nullptr };
+
+    // All widget children are grouped (one is displayed at a time, see current_)
     tgui::Group::Ptr title_{ nullptr };
     tgui::Group::Ptr options_{ nullptr };
     tgui::Group::Ptr training_{ nullptr };
+    tgui::Group::Ptr pause_{ nullptr };
+
+    // Convenience pointer to quickly access resolution
     tgui::ComboBox::Ptr resolutionBox_{ nullptr };
     static constexpr int pixelsBetweenButtons{ 10 };
 
     Menu(tgui::Gui& gui, std::vector<Event>& eventQueue);
     void setVisible(bool state);
+    void togglePause();
 
     template<typename T>
     static tgui::Group::Ptr CreateGroup(T callbackDispatch)
@@ -33,8 +41,8 @@ struct Menu
         const int groupHeight{ buttonHeight * static_cast<int>(callbackDispatch.size()) + pixelsBetweenButtons * (static_cast<int>(callbackDispatch.size()) - 1) };
 
         auto group = tgui::Group::create();
-        group->setSize(groupWidth, groupHeight);
         group->setVisible(false);
+        group->setSize(groupWidth, groupHeight);
         group->setPosition({ "50%", "50%" });
 
         tgui::Button::Ptr previousButton{ nullptr };
@@ -57,13 +65,23 @@ struct Menu
     void CreateTitleGroup();
     void CreateTrainingGroup();
     void CreateOptionsGroup();
+    void CreatePauseGroup();
 
-    // Callbacks
+    // Shared callback
+    void BackToPreviousGroup();
+
+    // Menu callbacks
     void ShowTitlePage();
     void ShowTrainingPage();
     void ShowOnlinePage();
     void ShowOptionsPage();
     void StartGame();
     void Exit();
+
+    // Options callbacks
     void ChangeResolution();
+
+    // Pause callbacks
+    void ResumeGame();
+    void BackToMainMenu();
 };

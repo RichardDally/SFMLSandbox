@@ -3,7 +3,6 @@
 #include "Menu.h"
 #include "Game.h"
 #include "Event.h"
-#include "Pause.h"
 #include <unordered_map>
 
 
@@ -30,7 +29,6 @@ int main()
     Game game(window, eventQueue);
     tgui::Gui tgui(window);
     Menu menu(tgui, eventQueue);
-    Pause pause(tgui, eventQueue);
 
     while (window.isOpen())
     {
@@ -65,14 +63,12 @@ int main()
                 case Event::BACK_TO_MAIN_MENU:
                 {
                     game.stops();
-                    menu.setVisible(true);
                     menu.ShowTitlePage();
-                    pause.toggleVisibility();
                     break;
                 }
                 case Event::TOGGLE_PAUSE:
                 {
-                    pause.toggleVisibility();
+                    menu.togglePause();
                     game.togglePause();
                     break;
                 }
@@ -95,5 +91,5 @@ int main()
         window.display();
     }
 
-    return EXIT_SUCCESS;
+    return 0;
 }
