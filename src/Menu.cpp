@@ -17,17 +17,17 @@ void Menu::CreateTitleGroup()
 {
     const auto titleDispatch = std::array{
         ButtonDetails{"Training", std::function([this]() {ShowTrainingPage(); })},
-        ButtonDetails{"Online", std::function([this]() {ShowOnlinePage(); })},
         ButtonDetails{"Options", std::function([this]() {ShowOptionsPage(); })},
         ButtonDetails{"Exit", std::function([this]() {Exit(); })},
     };
 
-    title_ = CreateGroup(titleDispatch);
-    title_->setVisible(true);
+    const auto widgets = CreateButtonWidgets(titleDispatch);
+    title_ = AlignVerticallyWidgets(widgets);
+    gui_.add(title_);
 
     // Menu displays title first
+    title_->setVisible(true);
     current_ = title_;
-    gui_.add(title_);
 }
 
 void Menu::CreateTrainingGroup()
@@ -37,34 +37,34 @@ void Menu::CreateTrainingGroup()
         ButtonDetails{"Back", std::function([this]() {BackToPreviousGroup(); })},
     };
 
-    training_ = CreateGroup(trainingDispatch);
+    const auto widgets = CreateButtonWidgets(trainingDispatch);
+    training_ = AlignVerticallyWidgets(widgets);
+
     gui_.add(training_);
 }
 
 void Menu::CreateOptionsGroup()
 {
-    options_ = tgui::Group::create();
-    options_->setVisible(false);
-    options_->setPosition({ "50%", "50%" });
-
     auto label = tgui::Label::create("Options");
-    options_->add(label);
+    label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
 
     resolutionBox_ = tgui::ComboBox::create();
     resolutionBox_->onItemSelect(std::function([this]() {ChangeResolution(); }));
-    resolutionBox_->setPosition({ tgui::bindLeft(label), tgui::bindBottom(label) + pixelsBetweenButtons });
     resolutionBox_->addItem("800x600");
     resolutionBox_->addItem("1280x800");
     resolutionBox_->addItem("1920x1080");
     resolutionBox_->addItem("2560x1440");
     resolutionBox_->setSelectedItem("1920x1080");
-    options_->add(resolutionBox_);
 
     auto backButton = tgui::Button::create("Back");
-    backButton->setPosition({ tgui::bindLeft(resolutionBox_), tgui::bindBottom(resolutionBox_) + pixelsBetweenButtons });
     backButton->onClick(std::function([this]() {BackToPreviousGroup(); }));
-    options_->add(backButton);
 
+    std::vector<tgui::Widget::Ptr> widgets;
+    widgets.push_back(label);
+    widgets.push_back(resolutionBox_);
+    widgets.push_back(backButton);
+
+    options_ = AlignVerticallyWidgets(widgets);
     gui_.add(options_);
 }
 
@@ -77,8 +77,8 @@ void Menu::CreatePauseGroup()
         ButtonDetails{"Quit to desktop", std::function([this]() {Exit(); })},
     };
 
-    pause_ = Menu::CreateGroup(pauseDispatch);
-    pause_->setVisible(false);
+    const auto widgets = CreateButtonWidgets(pauseDispatch);
+    pause_ = AlignVerticallyWidgets(widgets);
 
     gui_.add(pause_);
 }
@@ -151,11 +151,6 @@ void Menu::ShowTrainingPage()
         current_ = training_;
         current_->setVisible(true);
     }
-}
-
-void Menu::ShowOnlinePage()
-{
-    spdlog::info("online");
 }
 
 void Menu::ShowOptionsPage()

@@ -4,6 +4,7 @@
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/ComboBox.hpp>
+#include <TGUI/Widgets/VerticalLayout.hpp>
 #include <TGUI/Widgets/Group.hpp>
 #include <spdlog/spdlog.h>
 #include "Event.h"
@@ -14,14 +15,14 @@ struct Menu
     tgui::Gui& gui_;
     std::vector<Event>& eventQueue_;
 
-    tgui::Group::Ptr current_{ nullptr };
-    tgui::Group::Ptr previous_{ nullptr };
+    tgui::Container::Ptr current_{ nullptr };
+    tgui::Container::Ptr previous_{ nullptr };
 
     // All widget children are grouped (one is displayed at a time, see current_)
-    tgui::Group::Ptr title_{ nullptr };
-    tgui::Group::Ptr options_{ nullptr };
-    tgui::Group::Ptr training_{ nullptr };
-    tgui::Group::Ptr pause_{ nullptr };
+    tgui::Container::Ptr title_{ nullptr };
+    tgui::Container::Ptr options_{ nullptr };
+    tgui::Container::Ptr training_{ nullptr };
+    tgui::Container::Ptr pause_{ nullptr };
 
     // Convenience pointer to quickly access resolution
     tgui::ComboBox::Ptr resolutionBox_{ nullptr };
@@ -32,34 +33,44 @@ struct Menu
     void togglePause();
 
     template<typename T>
-    static tgui::Group::Ptr CreateGroup(T callbackDispatch)
+    static std::vector<tgui::Widget::Ptr> CreateButtonWidgets(T callbackDispatch)
     {
-        constexpr int buttonWidth{ 170 };
-        constexpr int buttonHeight{ 40 };
-
-        constexpr int groupWidth{ 150 };
-        const int groupHeight{ buttonHeight * static_cast<int>(callbackDispatch.size()) + pixelsBetweenButtons * (static_cast<int>(callbackDispatch.size()) - 1) };
-
-        auto group = tgui::Group::create();
-        group->setVisible(false);
-        group->setSize(groupWidth, groupHeight);
-        group->setPosition({ "50%", "50%" });
-
-        tgui::Button::Ptr previousButton{ nullptr };
+        std::vector<tgui::Widget::Ptr> result;
+        constexpr int widgetWidth{ 200 };
+        constexpr int widgetHeight{ 40 };
         for (auto& [name, callback] : callbackDispatch)
         {
             auto button = tgui::Button::create(name);
-            if (previousButton)
-            {
-                button->setPosition({ tgui::bindLeft(previousButton), tgui::bindBottom(previousButton) + pixelsBetweenButtons });
-            }
             button->onClick(callback);
-            button->setSize(buttonWidth, buttonHeight);
-            group->add(button);
-            previousButton = button;
+            button->setSize(widgetWidth, widgetHeight);
+            result.push_back(button);
+        }
+        return result;
+    }
+
+    static tgui::VerticalLayout::Ptr AlignVerticallyWidgets(const std::vector<tgui::Widget::Ptr>& widgets)
+    {
+        auto layout = tgui::VerticalLayout::create();
+        layout->setVisible(false);
+        layout->setOrigin(0.5f, 0.5f);
+        layout->setPosition({ "50%", "50%" });
+
+        auto containerHeight{ 0.f };
+        auto largestWidth{ 0.f };
+        for (auto widget : widgets)
+        {
+            if (widget->getSize().x > largestWidth)
+            {
+                largestWidth = widget->getSize().x;
+            }
+            containerHeight += widget->getSize().y;
+            layout->add(widget);
         }
 
-        return group;
+        // Set size according to its widgets
+        layout->setSize(largestWidth, containerHeight);
+
+        return layout;
     }
 
     void CreateTitleGroup();
@@ -73,7 +84,6 @@ struct Menu
     // Menu callbacks
     void ShowTitlePage();
     void ShowTrainingPage();
-    void ShowOnlinePage();
     void ShowOptionsPage();
     void StartGame();
     void Exit();
