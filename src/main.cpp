@@ -16,6 +16,7 @@ void ChangeResolution(sf::RenderWindow& window, Event resolutionChangeEvent)
     };
 
     window.create(resolutionMap.at(resolutionChangeEvent), "SFML Sandbox");
+    window.setFramerateLimit(30);
 }
 
 int main()
